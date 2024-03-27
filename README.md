@@ -1,5 +1,3 @@
-# new-shopping-bag
-
 ## Project setup
 ```
 npm install

@@ -1,6 +1,7 @@
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link>
+    <router-link to="/">Estacionamento</router-link>
+    <router-link to="/categorias">Categorias</router-link>
   </div>
   <div class="container">
     <router-view/>
@@ -13,6 +14,7 @@
   export default {
     created() {
       this.$store.dispatch('loadCarros');
+      this.$store.dispatch('loadCategorias');
     },
     computed: mapState([
     'carros'

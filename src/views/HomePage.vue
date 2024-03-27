@@ -12,19 +12,23 @@
                         <th>Categoria</th>
                         <th>Entrada</th>
                         <th>Saída</th>
-                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(carro, index) in carros" :key="index">
-                        <th scope="row">{{ carro.placa }}</th>
-                        <td>{{ carro.cor }}</td>
-                        <td>{{ carro.modelo.nome }}</td>
-                        <td>{{ carro.modelo.categoria.nome }}</td>
-                        <td>{{ timeSince(carro.entrada) }}</td>
-                        <td>{{ carro.saida }}</td>
-                        <td><a href="#" class="btn btn-success">Progress</a></td>
-                    </tr>
+                <tr v-for="(carro, index) in carros" :key="index">
+                    <th scope="row">{{ carro.placa }}</th>
+                    <td>{{ carro.cor }}</td>
+                    <td>{{ carro.modelo.nome }}</td>
+                    <td>{{ carro.modelo.categoria.nome }}</td>
+                    <td>
+                      {{ timeSince(carro.entrada) }}
+                      <span class="tiny-text">{{ carro.entrada }}</span>
+                    </td>
+                    <td>
+                      {{ timeSince(carro.saida) }}
+                      <span class="tiny-text">{{ carro.saida }}</span>
+                    </td>
+                  </tr>
                 </tbody>
             </table>
           </div>
@@ -56,7 +60,8 @@ export default {
     }
   },
   computed: mapState([
-    'carros', 
+    'carros',
+    'categorias',
     'dateTime'
   ]),
   methods: {
@@ -86,8 +91,9 @@ export default {
 
 <style lang="scss">
 
-  .home {
-  }
-
+.tiny-text {
+  font-size: 7pt;
+  display: block;
+}
 
 </style>
