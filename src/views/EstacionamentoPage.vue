@@ -45,8 +45,8 @@
                   <tr v-for="(data, index) in estacionamento" :key="index">
                       <th scope="row">{{ data.carro.placa }}</th>
                       <td>{{ data.carro.categoria.nome }}</td>
-                      <td>{{ timeSince(data.entrada) }}</td>
-                      <td>{{ timeSince(data.saida) }}</td>
+                      <td>{{ formatarData(data.entrada)  }}</td>
+                      <td>{{ formatarData(data.saida) }}</td>
                       <td>{{ data.park }}</td>
                     </tr>
                   </tbody>
@@ -124,6 +124,15 @@
               this.$notify('Veículo não Encontrado');
             }
           })
+      },
+      formatarData(dataString) {
+        let data = new Date(dataString);
+        let dia = data.getDate();
+        let mes = data.getMonth() + 1;
+        let ano = data.getFullYear();
+        let horas = data.getHours().toString().padStart(2, '0');
+        let minutos = data.getMinutes().toString().padStart(2, '0');
+        return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
       },
       getCurrentDateTime() {
           const now = new Date();
