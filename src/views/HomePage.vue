@@ -79,17 +79,16 @@ export default {
   },
   computed: mapState([
     'carros',
-    'categorias',
-    'modelos',
-    'dateTime'
+    'categorias'
   ]),
   methods: {
     cadastrar() {
-      axios.post('http://localhost:8000/api/carros/cadastrar', {
-        placa: this.cadastro.placa,
-        cor: this.cadastro.cor,
-        categoria: this.cadastro.categoria
-      })
+      const formData = new FormData();
+      formData.append('placa', this.cadastro.placa);
+      formData.append('cor', this.cadastro.cor);
+      formData.append('categoria', this.cadastro.categoria);
+
+      axios.post('http://localhost:8000/api/carros/cadastrar', formData)
         .then(response => {
           if (response.data.code == 200) {
             this.$store.dispatch('loadCarros');

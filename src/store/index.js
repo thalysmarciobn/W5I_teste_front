@@ -5,7 +5,8 @@ import axios from 'axios';
 export default createStore({
   state: {
     carros: [],
-    categorias: []
+    categorias: [],
+    estacionamento: []
   },
   mutations: {
     loadCarros(state, carros) {
@@ -13,6 +14,9 @@ export default createStore({
     },
     loadCategorias(state, categorias) {
       state.categorias = categorias;
+    },
+    loadEstacionamento(state, estacionamento) {
+      state.estacionamento = estacionamento;
     }
   },
   actions: {
@@ -26,6 +30,12 @@ export default createStore({
       axios.get('http://localhost:8000/api/categorias/lista')
       .then(response => {
         commit('loadCategorias', response.data);
+      })
+    },
+    loadEstacionamento({ commit }) {
+      axios.get('http://localhost:8000/api/estacionamento/lista')
+      .then(response => {
+        commit('loadEstacionamento', response.data);
       })
     }
   },

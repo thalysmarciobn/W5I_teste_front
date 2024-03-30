@@ -65,10 +65,11 @@ export default {
   ]),
   methods: {
     cadastrar() {
-      axios.post('http://localhost:8000/api/categorias/cadastrar', {
-        nome: this.cadastro.nome,
-        taxa: this.cadastro.taxa,
-      })
+      const formData = new FormData();
+      formData.append('nome', this.cadastro.nome);
+      formData.append('taxa', this.cadastro.taxa);
+
+      axios.post('http://localhost:8000/api/categorias/cadastrar', formData)
         .then(response => {
           if (response.data.code == 200) {
             this.$store.dispatch('loadCategorias');

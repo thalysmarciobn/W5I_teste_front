@@ -1,28 +1,28 @@
 <template>
     <div class="row">
       <div class="col-md-12">
-        <form @submit.prevent="cadastrar">
+        <form @submit.prevent="enviar">
           <div class="form-row">
             <div class="form-group col-md-4">
               <label for="inputEmail4">Placa</label>
-              <input type="text" class="form-control" id="inputPlaca" placeholder="0000-0000" v-model="cadastro.placa" required>
+              <input type="text" class="form-control" id="inputPlaca" placeholder="0000-0000" v-model="form.placa" required>
             </div>
             <div class="form-group col-md-4">
               <label for="inputCor">Data</label>
               <input
-              class="form-control"
+                class="form-control"
                 type="datetime-local"
                 id="meeting-time"
                 name="meeting-time"
-                value="2018-06-12T19:30"
-                min="2018-06-07T00:00"
-                max="2018-06-14T00:00" />
+                v-model="form.data"
+                :min="getCurrentDateTime()"
+              />
             </div>
             <div class="form-group col-md-4">
               <label for="inputState">Ação</label>
-              <select id="inputState" class="form-control" v-model="cadastro.categoria">
-                <option value="1" selected="selected">Entrada</option>
-                <option value="2">Saída</option>
+              <select id="inputState" class="form-control" v-model="form.park">
+                <option value="0" selected>Entrada</option>
+                <option value="1">Saída</option>
               </select>
             </div>
           </div>
@@ -35,15 +35,19 @@
                   <thead>
                       <tr>
                           <th>Placa</th>
-                          <th>Cor</th>
                           <th>Categoria</th>
+                          <th>Entrada</th>
+                          <th>Saída</th>
+                          <th>No Estacionamento</th>
                       </tr>
                   </thead>
                   <tbody>
-                  <tr v-for="(carro, index) in carros" :key="index">
-                      <th scope="row">{{ carro.placa }}</th>
-                      <td>{{ carro.cor }}</td>
-                      <td>{{ carro.categoria.nome }}</td>
+                  <tr v-for="(data, index) in estacionamento" :key="index">
+                      <th scope="row">{{ data.carro.placa }}</th>
+                      <td>{{ data.carro.categoria.nome }}</td>
+                      <td>{{ timeSince(data.entrada) }}</td>
+                      <td>{{ timeSince(data.saida) }}</td>
+                      <td>{{ data.park }}</td>
                     </tr>
                   </tbody>
               </table>
@@ -61,8 +65,7 @@
     components: {
     },
     created() {
-      this.$store.dispatch('loadCarros');
-      this.$store.dispatch('loadCategorias');
+      this.$store.dispatch('loadEstacionamento');
     },
     data() {
       return {
@@ -78,34 +81,62 @@
             }
           }
         ],
-        cadastro: {
+        form: {
           placa: '',
-          cor: '',
-          categoria: 0
+          data: '',
+          park: 0
         }
       }
     },
     computed: mapState([
-      'carros',
-      'categorias',
-      'modelos',
-      'dateTime'
+      'estacionamento'
     ]),
     methods: {
-      cadastrar() {
-        axios.post('http://localhost:8000/api/carros/cadastrar', {
-          placa: this.cadastro.placa,
-          cor: this.cadastro.cor,
-          categoria: this.cadastro.categoria
-        })
+      enviar() {
+        const formData = new FormData();
+        formData.append('placa', this.form.placa);
+        formData.append('data', this.form.data);
+        formData.append('park', this.form.park);
+
+        axios.post('http://localhost:8000/api/estacionamento/enviar', formData)
           .then(response => {
             if (response.data.code == 200) {
-              this.$store.dispatch('loadCarros');
+              this.$store.dispatch('loadEstacionamento');
+
+              let mensagem;
+              switch (response.data.op) {
+                case 1:
+                  mensagem = `Entrada com Sucesso ao Veículo ${this.form.placa}`;
+                  break;
+                case 2:
+                  mensagem = `Saída com Sucesso ao Veículo ${this.form.placa}`;
+                  break;
+                case 3:
+                  mensagem = `O Veículo ${this.form.placa} já Possui uma Entrada`;
+                  break;
+                case 4:
+                  mensagem = `É necessário o Veículo ${this.form.placa} Possuir uma Entrada`;
+                  break;
+              }
+
+              this.$notify(mensagem);
+            } else if (response.data.code == 404) {
+              this.$notify('Veículo não Encontrado');
             }
           })
       },
+      getCurrentDateTime() {
+          const now = new Date();
+          const year = now.getFullYear();
+          const month = (now.getMonth() + 1).toString().padStart(2, '0');
+          const day = now.getDate().toString().padStart(2, '0');
+          const hours = now.getHours().toString().padStart(2, '0');
+          const minutes = now.getMinutes().toString().padStart(2, '0');
+
+          return `${year}-${month}-${day}T${hours}:${minutes}`;
+      },
       timeSince(date) {
-        const currentDate = new Date(this.dateTime);
+        const currentDate = new Date();
         const diffInSeconds = Math.floor((currentDate - new Date(date)) / 1000);
   
         const intervals = [

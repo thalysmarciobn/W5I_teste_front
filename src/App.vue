@@ -15,6 +15,7 @@
       </ul>
     </div>
   </nav>
+  <notifications position="top center" />
   <div class="container">
     <router-view/>
   </div>
