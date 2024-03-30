@@ -38,6 +38,7 @@
                           <th>Categoria</th>
                           <th>Entrada</th>
                           <th>Saída</th>
+                          <th>Valor a Pagar</th>
                           <th>No Estacionamento</th>
                       </tr>
                   </thead>
@@ -47,6 +48,7 @@
                       <td>{{ data.carro.categoria.nome }}</td>
                       <td>{{ formatarData(data.entrada)  }}</td>
                       <td>{{ formatarData(data.saida) }}</td>
+                      <td>{{ data.valor }}</td>
                       <td>{{ data.park }}</td>
                     </tr>
                   </tbody>
